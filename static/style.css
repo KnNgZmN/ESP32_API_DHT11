@@ -1,0 +1,29 @@
+body {
+    background: linear-gradient(45deg, #4916d6 , #45bb0e );
+    font-family: 'Courier New', Courier, monospace;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+header {
+    background: linear-gradient(45deg, #4916d6 , #45bb0e );
+    color: white;
+    padding: 20px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    margin: 0;
+    font-size: 1.8em;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 30px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}

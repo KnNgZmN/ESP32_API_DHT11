@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dashboard de Sensores</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <header>
+      <h1>Temperatura y Humedad - ESP32 DHT11</h1>
+    </header>
+
+    <div class="container">
+      <canvas id="grafico" width="800" height="400"></canvas>
+    </div>
+
+    <script>
+      let miGrafico;
+
+      function cargarDatos() {
+        fetch("/api/datos")
+          .then((response) => response.json())
+          .then((datos) => {
+            const tiempos = datos
+              .map((d) => {
+                const fechaLocal = new Date(d.timestamp);
+                return fechaLocal.toLocaleString("es-CO", {
+                  dateStyle: "short",
+                  timeStyle: "medium",
+                  hour12: true,
+                });
+              })
+              .reverse();
+
+            const temperaturas = datos.map((d) => d.Temperatura).reverse();
+            const humedades = datos.map((d) => d.Humedad).reverse();
+
+            if (!miGrafico) {
+              const ctx = document.getElementById("grafico").getContext("2d");
+              miGrafico = new Chart(ctx, {
+                type: "line",
+                data: {
+                  labels: tiempos,
+                  datasets: [
+                    {
+                      label: "Temperatura (°C)",
+                      data: temperaturas,
+                      borderColor: "red",
+                      fill: false,
+                    },
+                    {
+                      label: "Humedad (%)",
+                      data: humedades,
+                      borderColor: "blue",
+                      fill: false,
+                    },
+                  ],
+                },
+                options: {
+                  responsive: true,
+                  animation: false,
+                  scales: {
+                    x: {
+                      title: { display: true, text: "Hora" },
+                    },
+                    y: {
+                      beginAtZero: true,
+                      title: { display: true, text: "Valor" },
+                    },
+                  },
+                },
+              });
+            } else {
+              miGrafico.data.labels = tiempos;
+              miGrafico.data.datasets[0].data = temperaturas;
+              miGrafico.data.datasets[1].data = humedades;
+              miGrafico.update();
+            }
+          });
+      }
+
+      // Cargar la primera vez
+      cargarDatos();
+
+      // Actualizar cada 3 segundos
+      setInterval(cargarDatos, 3000);
+    </script>
+  </body>
+</html>
